@@ -14,4 +14,16 @@
 7) Tidak lupa juga melakukan deployment ke PWS dengan membuat project baru bernama 'finalwhistle' kemudian ubah beberapa hal seperti SCHEMA dan production. Kemudian push ke github dan periksa secara berkala mengenai proses deployment ini apakah sudah sukses pada server Django.
 
 
-2. 
+2. BAGAN REQUEST CLIENT KE WEB : 
+https://drive.google.com/file/d/1-2-GJIkhWIBaRN_kEZFXjAURWHp1IzPW/view?usp=sharing
+
+Hal pertama adalah client request ke internet dan request tersebut akan diterima oleh Django kemudian argumen atau request tersebut diterima oleh views.py. Views akan melihat argumen tersebut meminta apa atau tipe data apa. Jika argumen meminta informasi yang ada di database (seperti informasi pembuatan dan berakhir project) maka ia harus meneruskan ke bagian models.py
+
+Models.py akan meneruskan permintaan client ke database dan mencari data yang diminta karena hanya models.py yang memiliki hak untuk mengatur pengambilan data bukan menyimpan. Setelah data diambil, models.py akan meneruskan ke views.py kemudian meneruskan ke index.html untuk membuat template kodenya dan diteruskan ke Django. Setelah itu informasi akan diteruskan ke client melalui internet.
+
+3. Peran settings.py dalam proyek Django adalah sebagai pusat konfigurasi utama proyek agar bisa berjalan sesuai dengan keinginan, baik saat developemnt maupun production. Settings.py yang berisi pengaturan untuk proyek Django seperti menentukan konfigusari proyek, mengatur aplikasi yang aktif dijalankan, mengatur keamanan dan respons proyek, mengatur URL dan template, dan masih banyak lagi.
+
+4. Cara kerja migrasi database di Django : 
+Migrasi database bekerja dengan cara menyingkronkan model Python dengan struktur database yang sudah ada. Ketika mengubah model di models.py, Django akan mendeteksi perubahan dan melakukan file migration dengan prompt 'python manage.py migrate' yang berisi instruksi perubahan database. File yang di migrate akan dieksekusi perubahannya di field pada database.
+
+5. Menurut saya framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak adalah karena mudah dipahami, lengkap, dan langsung bisa menghasilkan aplikasi nyata. Selain itu, saya juga mengerjakannya dengan Pythin dimana bahasa nya lebih mudah dipelajari dibandingkan Java. Saya juga merasa bahwa tidak perlu mengatur banyak hal dari nol dan Django menerapkan struktur proyek terorganisir dengan pola arsitektur Model-View-Template (MVT).
