@@ -70,3 +70,7 @@ Django akan menyertakan csrf_token dalam form sebagai input tersembunyi. Ketika 
 
 Hal tersebut dimanfaatkan oleh penyerang dengan membuat halaman web palsu yang berisi form HTML yang dirancang untuk melakukan operasi sensitif dan berbahaya di platform kita. Form ini dibuat untuk mengirimkan data ke URL halaman palsu ke korban. Ketika korban login ke platform dengan klik URL maka browser secara otomatis mengisi dan mengirimkan form tersebut ke server kita. Server pun akan menganggap permintaan itu valid karena tidak ada csrf_token dan melakukan operasi berbahaya tanpa sepengetahuan developer.
 
+POSTMAN SCREENSHOOT : https://drive.google.com/drive/folders/11PlRvzNF_tk09rdzFOOIikPw98DJOYeK?usp=sharing
+
+
+Tidak ada feedback untuk asdos selama tutorial 2, saya sangat merasa terbantu oleh Ka Edzhar yang mau mendemokan langkah - langkah memperbaiki eror pada hari Sabtu pagi (diluar jam kuliah) di discord.
