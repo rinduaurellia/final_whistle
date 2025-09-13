@@ -2,7 +2,46 @@
 
 <h5>Nama Aplikasi: </h5>
 <p>{{ nama_aplikasi }}</p>
-<h5>Name: </h5>
-<p>{{ name }}<p>
-<h5>Class: </h5>
+
+<h5>Name:</h5>
+<p>{{ name }}</p>
+
+<h5>Class:</h5>
 <p>{{ class }}</p>
+
+<a href="{% url 'main:create_product' %}">
+  <button>+ Add Product</button>
+</a>
+
+<hr>
+
+{% if not product_list %}
+<p>Belum ada data product pada Toko Final Whistle.</p>
+{% else %}
+
+{% for product in product_list %}
+<div>
+  <h2><a href="{% url 'main:show_product' product.id %}">{{ product.title }}</a></h2>
+
+ 
+  <p><strong>{{product.name}}</strong></p>
+  <p>{{product.description}}</p>
+  <p><b>{{ product.get_category_display }}</b> 
+    {% if product.is_featured %} | <b>Featured</b>{% endif %}
+    | Price: {{ product.price }}
+    | Rating: {{ product.rating_product }}
+ </p>
+
+ {% if product.thumbnail %}
+ <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="150">
+ <br />
+ {% endif %}
+
+
+  <p><a href="{% url 'main:show_product' product.id %}"><button>Read More</button></a></p>
+</div>
+
+<hr>
+{% endfor %}
+
+{% endif %}
