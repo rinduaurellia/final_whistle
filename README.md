@@ -33,7 +33,7 @@ Migrasi database bekerja dengan cara menyingkronkan model Python dengan struktur
 
 ================================================ TUGAS 3 =======================================================
 
-STEP BY STEP CHECKLIST : 
+5. STEP BY STEP CHECKLIST : 
 Sebelum membuat form, kita harus membuat skeleton yang berfungsi sebagai kerangka views situs web. Pada tugas kali ini, ada 4 fungsi yang ditambahkan pada file views.py untuk menampilkan objek yang sudah ada dalam format XML dan JSON, baik untuk esmua objek maupun berdasarkan ID. Fungsi - fungsi ini mengambil objek dari model seperti produk sepatu pada web saya dan mengonfersinya menjadi formal XML atau JSON.
 
 Selanjutnya jangan lupa untuk membuat rooting URL untuk masing - masing views (XML, JSON, XML by ID, JSON by ID) pada variabel urlpattern untuk menentukan bagaimana permintaan URL dari pengguna dipresentasikan ke file views di dalam aplikasi. Ketika pengguna mengakses https produk, Django akan melihat file urls.py untuk menentukan pola yang cocok dengan produk tersebut. Kemudian django akan memanggil fungsi view yang telah ditautkan ke rute tersebut. Tanpa urls.py, Django tidak bisa mengetahui fungsi mana yang harus dijalankan untu URL tertentu. Oleh karena itu, hal ini sangat diperlukan
@@ -55,6 +55,7 @@ Data delivery adalah proses mentransfer data dari satu sistem ke sistem lain unt
 
 2. JSON VS XML
 Dikutip dari aws.amazon.com , JSON dan XML adalah representasi data yang digunakan dalam pertukaran data antaraplikasi. JSON adalah format pertukaran data yang terbuka dan dpaat dibaca oleh manusia dan mesin. JSON bersifat independen dari setiap bahasa pemrograman dan merupakan output API umum dalam berbagai aplikasi. Sedangkan XML adalah bahasa markup yang menyediakan aturan untuk menentukan data apapun. XML menggunakan tanda untuk membedakan antara arribut data dan data aktual.
+Jadi menurut saya tidak ada yang lebih baik diantara json dan xml, namun json memberikan repsresentasi data yang lebih mudah dibaca oleh manusia, ukuran file nya lebih kecil dibandingkan xml mengakibatkan lebih mudah atau cepat dalam proses pengiriman data. (source : Bu Ara)
 
 JSON lebih populer dibanding XML karena lebih ringan, cepat, dan kemudahannya dalam bekerja. JSON tidak menggunakan struktur tag sehingga membuatnya lebih padat dan mudah dipahami oleh manusia. JSON mempresentasikan data yang sama dalam ukuran file yang lebih kecil untuk transfer data yang lebih cept. Selain itu, XML lebih kompleks dan membutuhkan struktur tag serta rentan terhadap modifikasi dan deklarasi tipe dokumen eksternal yang tidak terstruktu sehingga banyak orang yang meemilih JSON dibanding XML.
 
@@ -69,6 +70,8 @@ csrf_token (Cross-Site Request Forgery token) yang berada di file create_product
 Django akan menyertakan csrf_token dalam form sebagai input tersembunyi. Ketika form di-submit, Django akan memeriksa form ini dan token hanya diketahui server dan sesi pengguna saat itu. Jika permintaan datang dari web lain, penyerang tidak akan tahu token yang benar karena token tersebut terkat pada sesi pengguna yang sah. Ketika server menerima permintaan POST, ia memvalidasi token yang dikirim. Jika token tidak cocok, permintaan akan ditolak.
 
 Hal tersebut dimanfaatkan oleh penyerang dengan membuat halaman web palsu yang berisi form HTML yang dirancang untuk melakukan operasi sensitif dan berbahaya di platform kita. Form ini dibuat untuk mengirimkan data ke URL halaman palsu ke korban. Ketika korban login ke platform dengan klik URL maka browser secara otomatis mengisi dan mengirimkan form tersebut ke server kita. Server pun akan menganggap permintaan itu valid karena tidak ada csrf_token dan melakukan operasi berbahaya tanpa sepengetahuan developer.
+
+---------No 5 di paling atas------
 
 POSTMAN SCREENSHOOT : https://drive.google.com/drive/folders/11PlRvzNF_tk09rdzFOOIikPw98DJOYeK?usp=sharing
 
