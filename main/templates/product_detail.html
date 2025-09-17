@@ -20,4 +20,10 @@
 <p>Brand: {{ product.brand }}</p>
 <p>Size: {{ product.size_product }}</p>
 
+{% if news.user %}
+    <p>Author: {{ news.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+
 {% endblock content %}
