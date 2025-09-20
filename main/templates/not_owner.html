@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Akses Ditolak</h2>
+  <p>Anda bukan admin produk <b>{{ product.name }}</b>.</p>
+  <a href="{% url 'main:show_main' %}">
+    <button>Kembali</button>
+  </a>
+{% endblock %}

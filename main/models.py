@@ -7,11 +7,11 @@ class Product(models.Model):
     CATEGORY_CHOICES = [
         ('update', 'Update'),
         ('jersey', 'Jersey'),
-        ('sepatu', 'Sepatu'),
-        ('aksesoris', 'Aksesoris'),
-        ('topi', 'Topi'),
-        ('ball', 'Bola Tendang'),
-        ('kaos_kaki', 'Kaos Kaki'),
+        ('sepatu', 'Shoes'),
+        ('aksesoris', 'Accessories'),
+        ('topi', 'Hat'),
+        ('ball', 'Football'),
+        ('kaos_kaki', 'Socks'),
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -20,6 +20,7 @@ def show_main(request):
         products = Product.objects.all()
     else:
         products = Product.objects.filter(user=request.user)
+    
 
     context = {
         'nama_aplikasi': 'Final Whistle',
@@ -115,3 +116,17 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+@login_required(login_url='/login')
+def delete_product(request, id):
+    product = get_object_or_404(Product, id=id)  # cari hanya berdasarkan id
+
+    # cek apakah user yang login adalah pemilik produk
+    if product.user != request.user:
+        return render(request, "not_owner.html", {"product": product})
+
+    if request.method == "POST":
+        product.delete()
+        return redirect('main:show_main')
+
+    return render(request, "delete_confirm.html", {"product": product})

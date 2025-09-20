@@ -22,10 +22,10 @@
 <hr>
 
 <a href="?filter=all">
-  <button type="button">All Articles</button>
+  <button type="button">All Products</button>
 </a>
 <a href="?filter=my">
-  <button type="button">My Articles</button>
+  <button type="button">My Products</button>
 </a> 
 
 {% if not product_list %}
@@ -46,13 +46,21 @@
  </p>
 
  {% if product.thumbnail %}
- <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="150">
+ <img src="{{ product.thumbnail }}" alt="thumbnail" width="170" height="170">
  <br />
  {% endif %}
 
 
   <p><a href="{% url 'main:show_product' product.id %}"><button>Detail</button></a></p>
 </div>
+<p>
+
+  <form action="{% url 'main:delete_product' product.id %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('Yakin mau hapus produk ini?')">Delete</button>
+  </form>
+</p>
+
 
 <hr>
 {% endfor %}
