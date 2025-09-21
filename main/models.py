@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-# Mengatur struktur data produk di database
+# Mengatur struktur data produk di database, mendefinisikan model
 class Product(models.Model):
     # Relasi produk - user (many-to-one)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

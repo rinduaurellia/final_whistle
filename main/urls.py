@@ -8,7 +8,6 @@ app_name = 'main'
 # Konfigurasi rooting untuk aplikasi main
 urlpatterns = [
     path('', show_main, name='show_main'),
-    path('', include('main.urls')),
     path('create/', create_product, name='create_product'),
     path('<uuid:id>/', show_product, name='show_product'),
     path('xml/', show_xml, name='show_xml'),
