@@ -12,10 +12,13 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
 
+# Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
+
 @login_required(login_url='/login')
+# Menampilkan halaman utama daftar product tapi user harus login
 def show_main(request):
     filter_type = request.GET.get("filter", "all")  # default 'all'
-
+    # Menentukan produk mana yang akan ditampilkan
     if filter_type == "all":
         products = Product.objects.all()
     else:
@@ -29,13 +32,15 @@ def show_main(request):
         'product_list': products,
         'last_login': request.COOKIES.get('last_login', 'Never')
     }
-
+    # Menerima parameter request mengatur permintaan HTTP dan mengembalikan tampilan sesuai (menghubungan views dan template)
     return render(request, "main.html", context)
 
+# Form menambah produk baru 
 def create_product(request):
+    # Validasi input ssupaya produk terkait user login
     form = ProductForm(request.POST or None)
 
-    if form.is_valid() and request.method == "POST":
+    if form.is_valid() and request.method == "POST": # Kirim data ke server
         product_entry = form.save(commit = False)
         product_entry.user = request.user
         product_entry.save()
@@ -48,27 +53,32 @@ def create_product(request):
     return render(request, "create_product.html", context)
 
 @login_required(login_url='/login')
+# Menampilkan detail produk 
 def show_product(request, id):
+    # Cari produk berdasarkan id
     product = get_object_or_404(Product, pk=id)
 
     product.increment_views()
-    
+
     context = {
         'product': product
     }
 
     return render(request, "product_detail.html", context)
 
+# Export semua produk dalam format XML
 def show_xml(request):
      product_list = Product.objects.all()
      xml_data = serializers.serialize("xml", product_list)
      return HttpResponse(xml_data, content_type="application/xml")
 
+# Export semua produk dalam format JSON
 def show_json(request):
     product_list = Product.objects.all()
     json_data = serializers.serialize("json", product_list)
     return HttpResponse(json_data, content_type="application/json")
 
+# Export 1 produk berdasarkan id
 def show_xml_by_id(request, product_id):
    try:
        product_item = Product.objects.filter(pk=product_id)
@@ -84,7 +94,8 @@ def show_json_by_id(request, product_id):
        return HttpResponse(json_data, content_type="application/json")
    except Product.DoesNotExist:
        return HttpResponse(status=404)
-   
+
+# Registrasi akun baru
 def register(request):
     form = UserCreationForm()
 
@@ -97,6 +108,7 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
+# Login user
 def login_user(request):
    if request.method == 'POST':
       form = AuthenticationForm(data=request.POST)
@@ -113,12 +125,14 @@ def login_user(request):
    context = {'form': form}
    return render(request, 'login.html', context)
 
+# Logout user
 def logout_user(request):
     logout(request)
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
 
+# Hapus produk dan cari produk berdasarkan id
 @login_required(login_url='/login')
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)  # cari hanya berdasarkan id
