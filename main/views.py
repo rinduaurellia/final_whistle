@@ -132,17 +132,22 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-# Hapus produk dan cari produk berdasarkan id
-@login_required(login_url='/login')
-def delete_product(request, id):
-    product = get_object_or_404(Product, id=id)  # cari hanya berdasarkan id
 
-    # cek apakah user yang login adalah pemilik produk
-    if product.user != request.user:
-        return render(request, "not_owner.html", {"product": product})
-
-    if request.method == "POST":
-        product.delete()
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
         return redirect('main:show_main')
 
-    return render(request, "delete_confirm.html", {"product": product})
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    news = get_object_or_404(Product, pk=id)
+    news.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
