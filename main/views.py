@@ -147,7 +147,23 @@ def edit_product(request, id):
     return render(request, "edit_product.html", context)
 
 def delete_product(request, id):
-    news = get_object_or_404(Product, pk=id)
-    news.delete()
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+def show_hot_products(request):
+    # Filter produk yang memiliki views lebih besar dari 50 dan diurutkan berdasarkan views tertinggi
+    hot_products = Product.objects.filter(views__gt=50).order_by('-views') 
+    
+    context = {
+        'nama_aplikasi': 'Final Whistle',
+        'name': 'Rindu Aurellia Zahra',
+        'class': 'PBP C',
+        'product_list': hot_products, 
+        'last_login': request.COOKIES.get('last_login', 'Never'),
+        # BARIS INI HARUS DITAMBAHKAN
+        'is_hot_page': True 
+    }
+    # Menggunakan template yang sama (main.html) untuk menampilkan daftar produk
+    return render(request, "main.html", context)
 
