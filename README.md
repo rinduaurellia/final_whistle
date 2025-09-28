@@ -221,4 +221,176 @@ pada model Product yang berfungsi mengubungkan satu product dengan satu user mel
 7) Untuk menggunakan data dari cookies kita harus logout terlebih dahulu dari aplikasi Django dan membuka view.py di subdirektori main. Tambahkan import HttpResponseRedirect, reverse, dan datetime pada bagian paling atas. Ubah bagian login_user untuk menyimpan cookie baru bernama last_login yang berisi timestamp terakhir kali pengguna melakukan login. Ubah fungsi logout_user untuk menghapus cookie last_login setelah melakukan logout untuk mengapus last_login dari daftar cookies di reponse. 
 
 
+================================================ TUGAS 5 =======================================================
 
+1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+
+Mengutip dari web Easycoding, urutan prioritas selector CSS (specificity) adalah sebuah nilai atau bobot yang diberikan kepada selektor CSS yang menentukan aturan mana yang lebih kuat atau diprioritaskan dan diterapkan pada elemen HTML. Setiap kali browser menganalisis CSS, ia menghitung nilai specificity dari selector untuk menentukan aturan mana yang berlaku. 
+
+Berikut merupakan urutan prioritas dari yang paling rendah ke yang paling tinggi : 
+1) Selector Universal (*) : 
+   Adalah selektor yang paling rendah dalam urutan prioritas dan memiliki nilai specificity 0
+
+2) Selektor Elemen dan Pseudo-Elemen : 
+   Memiliki bobot rendah seperti div,p, atau h1, dan nilai specifity nya adalah 0,0,1
+   Contoh : 
+   p {
+    color: red;
+   }
+
+3) Class, Pseudo-class, dan Attribute Selector: 
+   Selector ini seperti .container, :hover, atau [type="text"] memiliki nilai specificity 0, 1, 0.
+   Contoh : 
+   .menu {
+    background-color: blue;
+   }
+
+4) ID Selector (#header atau #footer) : 
+   ID memiliki bobot yang lebih tinggi dibandingkan class dan elemen. Selector seperti #header memiliki nilai specificity 1, 0, 0.
+   Contoh : 
+   #header {
+    font-size: 20px;
+   }
+
+5) Inline Styles: 
+   Jika Anda memberikan style langsung pada elemen melalui atribut style, seperti <h1 style="color: red;">, nilai specificity-nya adalah 1, 0, 0, 0.
+   Contoh : <div style="color: green;">Text</div>
+
+Namun dibalik itu semua, !important pada aturan CSS akan mengesampingkan semua aturan lain kecuali inline syyles.
+
+Specificity dapat dihitung dengan empat angka yang dipisahkan oleh koma : (a, b, c, d) dari paling tinggi prioritas -> rendah
+(Inline styles; ID Selectors ; Jumlah class selectors; attribute selectors, pseudo-classes; Element selectors dan pseudo-elements)
+
+Contoh : 
+#header .menu-item a:hover {
+  color: blue;
+}
+
+Selector diatas memiliki nilai specificity (0, 1, 2, 1)
+Ada 1 ID selector (#header)
+Ada 2 class/pseudi-class selector (.menu-item dan :hover)
+Ada 1 elemen selector (a)
+
+Contoh HTML : 
+<h1 id="header" class="title">Judul Utama</h1>
+
+CSS : 
+h1 {
+  color: green;
+}
+
+#header {
+  color: red;
+}
+
+.title {
+  color: blue;
+}
+
+Lalu mana yang diterapkan duluan?
+Specificity dari tiap selektor : 
+- h1: Selector ini adalah element selector, sehingga specificity-nya adalah (0, 0, 0, 1).
+- #header: Selector ini adalah ID selector, sehingga specificity-nya adalah (0, 1, 0, 0).
+- .title: Selector ini adalah class selector, sehingga specificity-nya adalah (0, 0, 1, 0).
+
+CSS akan membaca dari atas ke bawah maka kode akan menerapkan h1 terlebih dahulu yaitu warna hijau. Namun, keika eksekusi #header maka warna akan terganti menjadi warna merah karena prioritas ID selecor lebih tinggi dibanding element selector. Meskipun ditulis terakhir, .title specificity-nya lebih rendah dibandinh #header, sehingga tidak merubah warna ketika #header diterapkan.
+
+2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+
+Dilansir dari laporan Marktingdive, sejumlah 53% pengguna intenet ternyata banyak yang memilih untuk meninggalkan website apabila loading-nya terlalu lama. Hal tersebut dikarenakan oleh design website yang dimiliki tidak responsif.
+
+Dikutip dari codingstudio.id, Fungsi responsive design website adalah untuk membuat tampilan website bisa menyesuaikan diri pada masing - masing ukuran layar pada pengunjung web. Berbagai tampilan yang disesuaikan diantaranya dari segi tampilan UI, ukuran huruf, hingga tata letak disesuaikan dengan ukuran layar pengguna dan resolusi perangkat yang digunakan.
+
+Mengapa Responsive Design penting? 
+a. Pengalaman Pengguna (UX) yang ditingkatkan 
+Website yang menyediakan pengalaman konsisten dan nyaman bagi pengguna akan meningkatkan waktu pemakaian user terlepas dari perangkat yang mereka gunakan. 
+
+b. Penggunaan beragam perangkat 
+Pengguna saat ini mengakses aplikasi web menggunakan berbagai jenis perangkat, mulai dari desktop, laptop, tablet, hingga smartphone. Dengan semakin banyaknya pengguna mobile, situs yang tidak dioptimalkan untuk tampilan layar kecil atau besar akan memberikan pengalaman pengguna yang buruk.
+
+c. Mengurangi Biaya Pemeliharaan 
+Dengan membuat satu desain yang responsif, developer tidak perlu lagi unruk membuat dan memelihara versi terpisah dari situs untuk deskop dan versi mobile atau seluler. Hal ini dapat mengurangi biaya dan waktu pemeliharaan.
+
+d. Search Engine Optimization (SEO) meningkat 
+Perlu diketahui bahwa tampilan website yang responsif ternyata dapat mempengaruhi peringkat di mesin pencarian. Maka dari itu dengan menggunakan desain web responsif , visibilitas website akan meningkat pada hasil pencarian karena hanya perlu mengelola satu URL dan satu konten.
+
+Contoh aplikasi yang sudah menerapkan responsive design : 
+1) AMAZON 
+Seperti yang kita ketahui, amazon memiliki basis pengguna global yang sangat besar, menjadi kewajiban bagi mereka memastikan bahwa pengalaman belanja tetap nyaman dan aman di berbagai perangkat (deskop amupun mobile) sangat penting untuk meningkatkan konversi dan penjualan.
+
+Ketika pengguna mengakses Amazon menggunakan ponsel atau tablet, situs menyesuaikan tampilannya dengan ukuran layar perangkat tersebut, memungkinkan pengguna untuk belanja dengan mudah melalui perangkat mobile atau desktop.
+
+2) Instagram
+Instagram merupakan platform sosial yang digunakan oleh hampir seluruh masyarakat di dunia dan berbasis gambar, jadi desain responsif memungkinkan gambar dan konten ditampilkan secara optimal pada berbagai ukuran layar, memaksimalkan kualitas visual dan interaksi pengguna.
+
+Instagram juga menerapkan desain responsif pada situs web mereka. Pengguna dapat mengakses Instagram baik melalui aplikasi seluler atau melalui browser web, dengan desain yang konsisten dan pengalaman pengguna yang tetap optimal.
+
+3) BCC News 
+BCC News menawarkan website berita internasional yang sudah pasti sering dikunjungi oleh berbagai pengguna. Karena pengguna sering mengakses berita di ponsel mereka, situs web yang responsif memastikan bahwa berita dan konten tetap dapat diakses dengan cepat dan nyaman di berbagai perangkat.
+
+Situs web berita seperti BBC News memiliki desain responsif, memastikan bahwa artikel dapat dibaca dengan mudah pada perangkat kecil seperti ponsel atau tablet, tanpa memerlukan zoom atau pengguliran horizontal.
+
+Contoh aplikasi yang belum menerapkan responsive design : 
+
+
+
+
+3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+1) Margin adalah ruang luar (di luar border) yang memisahkan suatu elemen dengan elemen lainnya. Margin bertugas mengontrol jarak antara elemen dan elemen lainnya di dalam halaman web baik elemen dalam satu baris (horizontal) maupun dalam satu kolom (vertikal).
+
+Contoh (CSS): 
+margin: 10px;  -> Memberikan jarak 10px pada semua sisi 
+margin-top: 20px;  -> Memberikan jarak 20px pada sisi atas 
+margin-right: 15px;  -> Memberikan jarak 15px pada sisi kanan 
+margin-bottom: 20px;  -> Memberikan jarak 20px pada sisi bawah 
+margin-left: 10px;  -> Memberikan jarak 10px pada sisi kiri
+
+2) Border 
+Definisi: Border adalah garis yang mengelilingi elemen di sekitar padding dan di dalam margin. Border memisahkan elemen dengan ruang sekitarnya, dan digunakan untuk memberikan garis pembatas atau batas visual pada elemen misalnya untuk tombol, kotak input, gambar, dan lainnya.
+
+Contoh (CSS): 
+border: 2px solid black;  -> Garis border 2px, tipe solid, warna hitam 
+border-top: 3px dotted red;  -> Border atas dengan tipe dotted dan warna merah 
+border-right: 1px solid green;  -> Border kanan dengan tipe solid dan warna hijau 
+border-bottom: 4px dashed blue;  -> Border bawah dengan tipe dashed dan warna biru 
+border-left: 2px solid yellow;  -> Border kiri dengan tipe solid dan warna kuning 
+
+3) Padding 
+Padding adalah ruang dalam (di dalam border) yang memisahkan konten (misalnya teks, gambar) dari border elemen. Padding memberikan ruang antara konten dengan batas elemen. Biasanya digunakan untuk mnambah ruang di dalam elemen agar konten tidak terlalu rapat dengan border.
+
+Contoh (CSS) : 
+padding: 10px;  -> Memberikan ruang 10px pada semua sisi 
+padding-top: 20px;  -> Memberikan ruang 20px pada sisi atas 
+padding-right: 15px;  -> Memberikan ruang 15px pada sisi kanan 
+padding-bottom: 20px;  -> Memberikan ruang 20px pada sisi bawah 
+padding-left: 10px;  -> Memberikan ruang 10px pada sisi kiri 
+
+Contoh : 
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contoh Margin, Border, dan Padding</title>
+    <style>
+        /* CSS untuk elemen div */
+        .box {
+            margin: 30px;         /* Jarak luar (antar elemen) */
+            padding: 20px;        /* Jarak dalam (antara border dan konten) */
+            border: 5px solid blue;  /* Border dengan ketebalan 5px dan warna biru */
+            background-color: #f0f0f0; /* Memberikan latar belakang abu-abu terang */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        elemen margin, padding, dan border.
+    </div>
+
+</body>
+</html>
+
+4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
