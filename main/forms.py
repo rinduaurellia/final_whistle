@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 from main.models import Product
 
+# Form dan fields untuk model Product
 class ProductForm(ModelForm):
     class Meta:
         model = Product

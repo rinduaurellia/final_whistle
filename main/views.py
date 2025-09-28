@@ -35,9 +35,9 @@ def show_main(request):
     # Menerima parameter request mengatur permintaan HTTP dan mengembalikan tampilan sesuai (menghubungan views dan template)
     return render(request, "main.html", context)
 
-# Form menambah produk baru 
+# Form menambah produk baru secara otomatis ketika disumbit dari form
 def create_product(request):
-    # Validasi input ssupaya produk terkait user login
+    # Validasi input supaya produk terkait user login
     form = ProductForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST": # Kirim data ke server
@@ -70,7 +70,7 @@ def show_product(request, id):
 def show_xml(request):
      product_list = Product.objects.all()
      xml_data = serializers.serialize("xml", product_list)
-     return HttpResponse(xml_data, content_type="application/xml")
+     return HttpResponse(xml_data, content_type="application/xml") # Return HTTP respons dengan XML data ke prosuct_list
 
 # Export semua produk dalam format JSON
 def show_json(request):
@@ -89,6 +89,7 @@ def show_xml_by_id(request, product_id):
 
 def show_json_by_id(request, product_id):
    try:
+       # Mengambil data dari database sesuai dengan model Product berdasarkan primary key (pk)
        product_item = Product.objects.get(pk=product_id)
        json_data = serializers.serialize("json", [product_item])
        return HttpResponse(json_data, content_type="application/json")
