@@ -332,10 +332,15 @@ Situs web berita seperti BBC News memiliki desain responsif, memastikan bahwa ar
 
 Contoh aplikasi yang belum menerapkan responsive design : 
 
+1) https://www.papua.go.id/#
+Ketika mengakses website dengan menggunakan latop, beberapa fungsi terload dengan baik. Namun ketika membuka web dengan handphone atau mobile, tidak ada satupun fungsi yang terdefinisi dengan baik mengakibatkan saya tidak dapat melihat berita yang memang harusnya tersedia.
 
+2) https://www.bukalapak.com
+Ketika mengakses aplikasi, fungsi e-commerce terdefinisi dengan baik dan tampilannya juga sesuai dengan bentuk mobile. Namun ketika mengakses web nya, web akan menampilkan aplikasi dengan mode mobile, padahal harusnya tidak (tampilkan dalam bentuk web). Inailah yang menjadi dasar mengapa bukalapak belum menerapkan responsive design antara web dan aplikasi.
 
 
 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+
 1) Margin adalah ruang luar (di luar border) yang memisahkan suatu elemen dengan elemen lainnya. Margin bertugas mengontrol jarak antara elemen dan elemen lainnya di dalam halaman web baik elemen dalam satu baris (horizontal) maupun dalam satu kolom (vertikal).
 
 Contoh (CSS): 
@@ -393,4 +398,106 @@ Contoh :
 
 4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
 
+Dilansir dari rumahweb, Flex box adalah sebuah sistem CSS yang berfungsi untuk menyederhanakan tata letak tampilan website, dimana dapat mengatur element secara responsif baik dalam arah horizonal maupun vertikal tanpa perlu menggunakan tata letak tradisional yang lebih kompleks. Flexbox sangat berguna untuk membuat tata letak tampilan website yang dinamis, seperti menyamakan elemen di tengah, membagi ruang secara proporsional, atau mengatur elemen dengan ukuran berbeda agar tetap seimbang di berbagai perangkat.
+
+Fungsi CSS Flex Box : 
+- Mengatur elemen secara horizontal atau vertikal
+- Membuat elemen responsif
+- Membagi elemen dengan mudah
+- Mengatur urutan elemen
+
+Dasar Penggunaan CSS Flexbox : 
+1) Layout
+Untuk menggunakan Flexbox layout, kita harus membuat sebuah container dengan property : display dan menggunakan nilai / value flex.
+
+Contoh : 
+.container {
+  display: flex;
+}
+
+2) Container 
+Setelah membuat sebuah elemen kontainer menggunakan properti display:flex, maka secara otomatis layout pada kontainer tersebut akan menggunakan layout flexbox container, sehingga kita dapat menggunakan beberapa properti lain yang digunakan oleh layout flexbox.
+
+3) Flex Items 
+Properti Flex Item : 
+- display : menggunakan nilai dan value
+.container {
+  display: flex;
+}
+
+- flex-direction : dapat menentukan arah yang akan menampilkan elemen yang ada di dalam container flexbox. Arah tersebut dapat mengarah berbaris atau horizontal (dari kiri ke kanan atau sebaliknya), atau seperti kolom/vertikal (dari atas kebawah atau sebaliknya)
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+- justify-content :  digunakan untuk menentukan elemen agar sejajar di antara elemen secara horizontal
+.container {
+  display: flex;
+  justify-content:center ;
+}
+
+- align-content : digunakan untuk menentukan elemen di dalam kontainer agar sejajar di antara elemen secara vertikal.
+.container {
+  display: flex;
+  align-content: center;
+}
+
+- align-items : menentukan elemen di dalam kontainer agar sejajar di antara elemen secara horizontal
+.container {
+  display: flex;
+  align-items: center;
+}
+
+- order : mengubah urutan elemen di dalam kontainer flex. Anda dapat mengurutkan dari awal hingga akhir atau dari atas ke bawah (flex-direction:column) atau dari kiri ke kanan (flex-direction:row).
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+Dikutip dari https://www.barajacoding.or.id/apa-itu-grid-layout-untuk-programing/, Grid Layout CSS adalah modul CSS yang memungkinkan pengembangan web untuk membuat atat letak halaman secara lebih fleksibel dan kuat dibandingkan dengan metode tata letak tradisional seperti float atau positioning. Grid laytout memungkinkan pembuatan grid fua dimensi yang terdiri dari baris (rows) dan kolom (coloumns), dimana elemen - elemen HTML dapat ditempatkan dengan tepat di dalamnya.
+
+Fitur Utama Grid Layout CSS : 
+1) Grid Container 
+Elemen yang menggunakan properti display: grid; atau inline-grid; menjadi grid container, yang memulai konteks grid untuk inheritence nya.
+
+2) Grid Items 
+Inheritence atau anak - anak dari grid container yang ditempatkan di dalam sel grid.
+
+3) Grid Lines 
+Garis-garis vertikal dan horizontal yang membagi grid menjadi baris dan kolom.
+
+4) Grid Tracks
+Area antara dua garis grid bersebelahan, bisa berupa baris atau kolom.
+
+5) Grid Cells
+Area persegi atau persegi panjang yang dibentuk oleh dua garis grid yang berpotongan.
+
+6) Grid Areas
+Area yang diberi nama di dalam grid, memungkinkan gruping dari beberapa sel menjadi satu area yang lebih besar.
+
+Keunggulan Grid Layout CSS : 
+- Responsif :
+Memungkinkan pengembang untuk membuat tata letak responsif dengan mudah, mengatur ulang ukuran dan posisi elemen-elemen sesuai dengan perubahan ukuran layar atau perangkat.
+
+- Fleksibilitas tinggi : 
+Menyediakan kontrol yang lebih besar terhadap tata letak halaman, dengan kemampuan untuk menentukan dimensi relatif, posisi, dan tata letak elemen secara tepat.
+
+- Peningkatan Kinerja :
+Dibandingkan dengan teknik tata letak tradisional seperti float atau positioning, Grid Layout cenderung lebih efisien dalam hal kinerja karena memungkinkan browser untuk mengoptimalkan render secara lebih baik.
+
 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+1) Hal pertama yang dilakukan adalah menambah tailwind ke Aplikasi untuk mempermudah pengembangan UI dengan menggunakan kelas utility yang akan diterapkan langsung ke HTML.
+
+2) Tambahkan fitur edit news ke aplikasi final whistle pada views.py yaitu edit product yang dimana hanya user yang add product tersebut yang dapat mengedit detail product. Jangan lupa untuk membuat tampilan utama atau berkas html nya dan rooting ke urls.py serta urls patterns. Tambahkan looping untuk pengeditan produk pada main.html nya.
+
+3) Tambahkan juga function untuk menghapus produk namun hanya user yang terautorisasi yang bisa menghapus data produk serta lakukan rooting ke urls dan path ke dalam url patterns. Jangan lupa untuk menambahkan button dan tampilan delete product ke dalma main html.
+
+4) Tambahkan navigation bar pada aplikasi yang akan ditempatkan di bagian atas halaman berisi tombol atau tautan ke halaman - halaman dalam aplikasi. Pada kali ini, saya membuat navigation bar hot product dan create product. Hot product akan memfilter product yang telah dilihat lebih dari 50 kali. Jangan lupa untuk membuat html nya agar navbar dapat terlihat di dalam web final whistle.
+
+5) Tambahkan middleware whiteNoise pada settings.py agar secara otomatis Django dapat mengelola file statis secara otomatis dalam mode produksi (DEBUG=False) tanpa perlu konfigurasi yang kompleks. Hal ini berguna agar file statis tersebut dapat diakses di deployment.
+
+6) Hubungkan global.css dan script Tailwind ke base.html agar dapat mengatur tampilan form yang memiliki class form-style. Kode CSS akan membuat semua input memiliki lebar penuh, padding, border, dan sudut yang melengkung. Namun, saya menambahkan beberapa perubahan seperti warna pada halaman registrasi, utama, dan detail produk.
+
+7) Styling halaman navigation bar, login, register, home, edit produk, create new product dengan kode html yang telah dibuat. Tambahkan direktori static dan buat file image, masukkan image png dan drag. Kemudian modifikasi main.html sehingga dapat menampilkan thumbnail dengan foto yang sudah diinput.
