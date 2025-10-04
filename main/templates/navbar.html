@@ -1,11 +1,18 @@
+{% load static %}
 <nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center">
-        <h1 class="text-xl font-semibold text-gray-900">
-          <span class="text-sky-500">Final Whistle</span> Product
+        
+        <h1 class="text-xl font-semibold text-gray-900 flex items-center space-x-2">
+          
+          <img src="{% static 'css/image/logo-final-whistle.png' %}" 
+               alt="Final Whistle Logo" 
+               class="h-8 w-auto">
+               
+          <span class="text-sky-500">Final Whistle Shop</span> 
         </h1>
-      </div>
+        </div>
       
       <div class="hidden md:flex items-center space-x-8">
         <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
