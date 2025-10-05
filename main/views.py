@@ -28,7 +28,6 @@ def show_main(request):
     else:
         products = Product.objects.filter(user=request.user)
     
-
     context = {
         'nama_aplikasi': 'Final Whistle',
         'name': 'Rindu Aurellia Zahra',
@@ -99,7 +98,6 @@ def show_json(request):
 
     return JsonResponse(data, safe=False)
 
-# Export 1 produk berdasarkan id
 def show_xml_by_id(request, product_id):
    try:
        product_item = Product.objects.filter(pk=product_id)

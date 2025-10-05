@@ -501,3 +501,97 @@ Dibandingkan dengan teknik tata letak tradisional seperti float atau positioning
 6) Hubungkan global.css dan script Tailwind ke base.html agar dapat mengatur tampilan form yang memiliki class form-style. Kode CSS akan membuat semua input memiliki lebar penuh, padding, border, dan sudut yang melengkung. Namun, saya menambahkan beberapa perubahan seperti warna pada halaman registrasi, utama, dan detail produk.
 
 7) Styling halaman navigation bar, login, register, home, edit produk, create new product dengan kode html yang telah dibuat. Tambahkan direktori static dan buat file image, masukkan image png dan drag. Kemudian modifikasi main.html sehingga dapat menampilkan thumbnail dengan foto yang sudah diinput.
+
+
+================================================ TUGAS 6 =======================================================
+1.  Apa perbedaan antara synchronous request dan asynchronous request?
+Perbedaan mendasar antara synchronous (sinkron) dan asynchronous (asinkron) adalah pada alur kontrol program (JavaScript) saat permintaan jaringan terjadi.
+
+A. Synchronous (Memblokir)
+Dalam model sinkron, permintaan jaringan terjadi secara berurutan. Ketika browser mengirimkan permintaan ke server, diantaranya:
+
+- Aplikasi Memblokir: Eksekusi kode JavaScript berhenti total (blocking).
+
+- Menunggu Respons: Browser menunggu dengan sabar hingga seluruh respons (termasuk data dan instruksi) kembali dari server.
+
+- UX Buruk: Selama masa tunggu ini (yang bisa memakan waktu ratusan milidetik hingga beberapa detik), halaman web akan terlihat membeku. Pengguna tidak dapat mengklik, menggulir, atau berinteraksi dengan elemen lain.
+
+Jadi, seluruh respons harus selesai dieksekusi terlebih dahulu baru dapat kembali ke server.
+
+B. Asynchronous (Non-Memblokir)
+Dalam model asinkron (seperti AJAX), permintaan jaringan dikirimkan di latar belakang:
+
+- Aplikasi Berlanjut: Eksekusi kode JavaScript di thread utama terus berjalan (non-blocking).
+
+- Mekanisme Callback: Permintaan diberi handler atau fungsi callback (panggilan balik). Setelah data kembali dari server di masa depan, fungsi callback tersebut akan dijalankan untuk memproses hasilnya.
+
+- UX Mulus: Pengguna tetap dapat berinteraksi dengan sisa halaman, sehingga pengalaman terasa lebih cepat dan responsif.
+
+User dapat beinteraksi dengan fitur halaman lain ketika kode berjalan di belakang layar.
+
+2.  Bagaimana AJAX bekerja di Django (alur request–response)?
+AJAX (Asynchronous JavaScript and XML, meskipun sekarang sering menggunakan JSON) memanfaatkan sifat asinkron ini untuk berinteraksi dengan Django tanpa reload.
+
+1) Inisiasi (Frontend - JavaScript):
+
+- Pengguna berinteraksi (klik tombol Filter Produk, Submit Modal).
+
+- JavaScript (menggunakan fetch atau XMLHttpRequest) membuat permintaan.
+
+- Keamanan: Permintaan POST harus menyertakan Token CSRF di header untuk divalidasi oleh Django.
+
+2) Routing (Backend - Django urls.py):
+
+- Permintaan masuk ke server Django.
+
+- urls.py mengarahkan URL ke fungsi view yang spesifik (misalnya, show_json atau add_product_entry_ajax).
+
+3) Pemrosesan Data (Backend - Django views.py):
+
+- View menerima request (request object). Karena datanya JSON, view harus memprosesnya secara manual: data = json.loads(request.body). View menjalankan logika bisnis (membuat objek Product, memfilter queryset, melakukan validasi).
+
+4) Respons (Backend - Django JsonResponse):
+
+View mengemas data hasil pemrosesan (seperti daftar produk terbaru atau pesan sukses) ke dalam objek JsonResponse dan response ini berisi hanya data yang diperlukan (JSON), bukan HTML lengkap.
+
+5) Pembaruan DOM (Frontend - JavaScript Callback):
+
+- JavaScript menerima dan mengurai data JSON.
+- JavaScript secara selektif memanipulasi DOM (Document Object Model) — misalnya, looping melalui daftar produk dan menyuntikkan HTML baru ke dalam elemen #grid tanpa menyentuh header atau navbar.
+
+3.  Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+
+1) Peningkatan Performa : Daripada memuat ulang seluruh halaman (yang mengirimkan kembali semua assets CSS dan header HTML), AJAX hanya menukar data mentah (JSON), sehingga mempercepat waktu respons.
+
+2) Pengalaman Pengguna (UX)	: Memberikan pengalaman tanpa jeda. Pengguna tidak melihat flash putih atau harus kehilangan posisi scroll mereka. Situs terasa lebih cepat dan lebih cair (fluid).
+
+3) Efisiensi Server : Server hanya menjalankan view untuk logika data. Ia tidak perlu memanggil template engine Django untuk merender seluruh halaman HTML, mengurangi CPU load pada server.
+
+4) Interaksi Real-time : AJAX adalah landasan untuk pembaruan real-time (seperti penghitung like, chat notification, atau pembaruan live score), di mana halaman perlu diperbarui berdasarkan event server tanpa intervensi pengguna.
+
+4.  Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+
+1) Secara default, Django melindungi dari serangan SCRF (Cross-Site Request Forgery). Lalu karena AJAX sering atau kerap kali melakukan POST request di luar form HTML standar, request tersebut tidak secara otomatis manyertakan token CSRF.
+
+2) Maka kita harus secara manual menyertakan token CSRF di header setiap permintaanan AJAX yang tidak menggunakan 'GET' seperti POST, PUT, DELETE.
+misalnya seperti : 
+'X-CSRFToken': '{{ csrf_token }}' // Nilai token diambil dari template Django
+
+diletakkan di JavaScript fetch/XMLHttpRequest header ^ kemudian Django middleware akan memeriksa token ini. Jika tidak ada atau tidak valid, permintaan akan ditolak dengan status 403 Forbidden.
+
+3) Kita juga harus memvalidasi semua data yang masuk mulai dari kata sandi, email, dan username di view Django (backend) bahkan setelah client melakukan validasi di JavaScript frontend karena bisa jadi client adalah seorang hacker yang bisa menyisipkan kode-kode perusak web.
+
+4) Terakhor, semua data sensitif (kredensial login) harus ditransfer melalui HTTPS untuk enkripsi.
+
+5.  Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+AJAX meningkatkan UX dengan : 
+
+1) Pembaruan Parsial : Hanya bagian konten yang berubah (misalnya, grid produk) yang dimuat ulang, bukan seluruh tata letak.
+
+2) Feedback Cepat: Pengguna mendapatkan umpan balik langsung (feedback) pada element tempat mereka berinteraksi. Contohnya: loading spinner kecil muncul di tombol "Publish Product" Anda, atau card baru muncul di grid tanpa me-refresh header. Ini menghilangkan ketidakpastian pengguna tentang apakah tindakan mereka berhasil diproses. Ini sangat berguna bagi user karena pastinya mereka perlu validasi mengenai keberhasilan mereka.
+
+3) Pengurangan Hambatan: Penggunaan modal AJAX (seperti modal Create Product Anda) memungkinkan pengguna untuk melakukan tindakan sekunder tanpa meninggalkan halaman utama, membuat alur kerja terasa lebih alami dan efisien.
+
+4) Peningkatan Responsivitas: Halaman terasa responsif dan cepat, seolah-olah menggunakan aplikasi desktop atau mobile native.
+
+5) Kontinuitas Alur Kerja: Pengguna dapat menyelesaikan tugas (seperti menambah produk melalui modal) tanpa dipindahkan ke halaman yang berbeda atau kehilangan konteks halaman utama.

@@ -35,6 +35,10 @@
         <a id="filter-my" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-600 hover:text-white">
           My Product
         </a>
+        <button id="refreshButton" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-600 hover:text-white flex items-center">
+          <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.207 19.495m0-9.284v9.284M20 20v-5h-.581m-15.357-2A8.001 8.001 0 0019.792 4.505m0 9.284h-9.284"></path></svg>
+          Refresh
+      </button>
       </div>
       {% if user.is_authenticated %}
         <div class="text-sm text-gray-500">Last login: {{ last_login }}</div>
@@ -82,6 +86,8 @@
   const productGridContainer = document.getElementById('grid'); // Diubah dari productGridContainer
   const showAllProductsButton = document.getElementById('filter-all'); // Diubah dari showAllproductButton
   const showMyProductsButton = document.getElementById('filter-my'); // Diubah dari showMyproductButton
+  const refreshButton = document.getElementById('refreshButton'); // TANGKAP TOMBOL BARU
+
   
   // State Variables
   let activeFilter = 'all';
@@ -265,8 +271,13 @@
   function initializeProductPage() { // Diubah dari initializeproductPage
     showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
     showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
+    showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
     
     fetchProductsFromServer();
+  }
+
+  if (refreshButton) {
+    refreshButton.addEventListener('click', fetchProductsFromServer);
   }
   
   // Start application
