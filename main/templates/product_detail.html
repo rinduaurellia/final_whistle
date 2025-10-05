@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block meta %}
-<title>{{ product.name }} - Football Product</title>
+<title>Product Detail</title>
 {% endblock meta %}
 
 {% block content %}
@@ -15,58 +15,59 @@
             </a>
         </div>
         
-        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <svg class="animate-spin h-8 w-8 text-sky-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading product detail...</p>
+        </div>
+
+        <div id="error-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-red-500 text-5xl">⚠️</div>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load product</h3>
+            <p class="text-gray-500">Please check the product ID or try again later.</p>
+        </div>
+        
+        <article id="product-content" class="bg-white rounded-lg border border-gray-200 overflow-hidden hidden">
             
             <div class="p-6 sm:p-8">
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-sky-500 text-white">
-                        {{ product.get_category_display }}
-                    </span>
-                    
-                    {% if product.is_featured %}
-                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">
-                            Featured
-                        </span>
-                    {% endif %}
-                </div>
+                <div id="badges-container" class="flex flex-wrap items-center gap-2 mb-4">
+                    </div>
                 
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-4">
-                    {{ product.name }}
-                </h1>
+                <h1 id="product-name" class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-4">
+                    </h1>
                 
                 <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4">
-                    <span class="text-lg font-semibold text-gray-900">
-                        Price: Rp{{ product.price }}
-                    </span>
-                    <span class="text-base text-gray-600">
-                        Rating: ⭐ {{ product.rating_product }}
-                    </span>
-                    <span class="text-base text-gray-600">
-                        Size: {{ product.size_product }}
-                    </span>
-                    <span class="text-base text-gray-600">
-                        Brand: {{ product.brand }}
-                    </span>
-                    <span class="text-base text-gray-600">
-                        Views: {{ product.views }}
-                    </span>
+                    <span id="product-price" class="text-lg font-semibold text-gray-900">
+                        </span>
+                    <span id="product-rating" class="text-base text-gray-600">
+                        </span>
+                    <span id="product-size" class="text-base text-gray-600">
+                        </span>
+                    <span id="product-brand" class="text-base text-gray-600">
+                        </span>
+                    <span id="product-views" class="text-base text-gray-600">
+                        </span>
+                    <time id="product-date" class="text-base text-gray-600">
+                        </time>
                 </div>
             </div>
-
-            {% if product.thumbnail %}
-                <div class="px-6 sm:px-8">
-                    <img src="{{ product.thumbnail }}" 
-                         alt="Product thumbnail" 
-                         class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
-                </div>
-            {% endif %}
+            
+            <div id="featured-image-container" class="px-6 sm:px-8 hidden">
+                <img id="featured-image" 
+                     src="" 
+                     alt="Product image" 
+                     class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
+            </div>
 
             <div class="p-6 sm:p-8">
                 <div class="prose prose-lg max-w-none">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Description</h2>
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
-                        {{ product.description }}
-                    </div>
+                    <div id="product-description" class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                        </div>
                 </div>
             </div>
 
@@ -74,11 +75,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="font-medium text-gray-900">
-                            {% if product.user %}
-                                <p>Author: {{ product.user.username }}</p>
-                            {% else %}
-                                <p>Author: Anonymous</p>
-                            {% endif %}
+                            <p id="product-author">Uploader: Loading...</p>
                         </div>
                         <p class="text-sm text-gray-500">Uploader</p>
                     </div>
@@ -87,4 +84,136 @@
         </article>
     </div>
 </div>
+<script>
+    // Configuration
+    const PRODUCT_ID = "{{ product.id }}";
+    const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+    
+    // DOM Elements
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const productContent = document.getElementById('product-content'); // Changed from articleContent
+    const badgesContainer = document.getElementById('badges-container');
+    const productName = document.getElementById('product-name'); // Changed from articleTitle
+    const productDate = document.getElementById('product-date'); // Changed from articleDate
+    const productViews = document.getElementById('product-views'); // Changed from articleViews
+    const featuredImageContainer = document.getElementById('featured-image-container');
+    const featuredImage = document.getElementById('featured-image');
+    const productDescription = document.getElementById('product-description'); // Changed from articleContentText
+    const productAuthor = document.getElementById('product-author'); // Changed from articleAuthor
+    // New product fields (assuming these IDs exist in your HTML template)
+    const productPrice = document.getElementById('product-price');
+    const productRating = document.getElementById('product-rating');
+    const productSize = document.getElementById('product-size');
+    const productBrand = document.getElementById('product-brand');
+    
+    
+    // Show/hide page sections
+    function showState(state) {
+        loadingState.classList.toggle('hidden', state !== 'loading');
+        errorState.classList.toggle('hidden', state !== 'error');
+        productContent.classList.toggle('hidden', state !== 'ready'); // Changed to productContent
+    }
+    
+    // Get readable category name (Adjusted for product categories)
+    function getCategoryLabel(categoryCode) {
+        const categoryMapping = {
+            jersey: 'Jersey',
+            ball: 'Ball',
+            shoes: 'Shoes',
+            accessories: 'Aksesoris',
+            apparel: 'Pakaian',
+        };
+        return categoryMapping[categoryCode] || categoryCode;
+    }
+    
+    // Render product content
+    function renderProduct(product) { // Changed function name and parameter
+        // Set title
+        productName.textContent = product.name; // Use 'name' instead of 'title'
+        document.title = `${product.name} - Football Product`; // Changed page title
+        
+        // Set badges
+        badgesContainer.innerHTML = '';
+        
+        // Category badge (Color changed to sky-600)
+        const categoryBadge = document.createElement('span');
+        categoryBadge.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-sky-600 text-white';
+        categoryBadge.textContent = getCategoryLabel(product.category);
+        badgesContainer.appendChild(categoryBadge);
+        
+        // Featured badge
+        if (product.is_featured) {
+            const featuredBadge = document.createElement('span');
+            featuredBadge.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800';
+            featuredBadge.textContent = 'Featured';
+            badgesContainer.appendChild(featuredBadge);
+        }
+        
+        // Hot badge (using 'views' or similar field)
+        if (product.views > 20) { // Assuming product data uses 'views' instead of 'news_views'
+            const hotBadge = document.createElement('span');
+            hotBadge.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800';
+            hotBadge.textContent = 'Hot';
+            badgesContainer.appendChild(hotBadge);
+        }
+        
+        // Set date and views
+        const formattedDate = new Date(product.created_at).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        productViews.textContent = `Views: ${product.views} views`; // Changed to 'views'
+        
+        // Set Product Metadata (Price, Rating, Size, Brand)
+        productPrice.textContent = `Price: Rp${(product.price || 0).toLocaleString('id-ID')}`;
+        productRating.textContent = `Rating: ⭐ ${product.rating_product || 'N/A'}`;
+        productSize.textContent = `Size: ${product.size_product || 'N/A'}`;
+        productBrand.textContent = `Brand: ${product.brand || 'N/A'}`;
+        
+        // Set featured image
+        if (product.thumbnail) {
+            featuredImage.src = product.thumbnail;
+            featuredImage.alt = product.name;
+            featuredImageContainer.classList.remove('hidden');
+        } else {
+            featuredImageContainer.classList.add('hidden');
+        }
+        
+        // Set content (Description)
+        productDescription.textContent = product.description; // Changed to 'description'
+        
+        // Set author
+        const authorName = product.user_username || 'Anonymous';
+        productAuthor.textContent = `Uploader: ${authorName}`; // Changed to 'Uploader'
+    }
+    
+    // Fetch product detail
+    async function loadProductDetail() { // Changed function name
+        try {
+            showState('loading');
+            
+            const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+                headers: { 'Accept': 'application/json' },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to fetch product detail');
+            }
+    
+            const productData = await response.json();
+            renderProduct(productData); // Changed function call
+            showState('ready');
+        } catch (error) {
+            console.error('Error loading product detail:', error);
+            showState('error');
+        }
+    }
+    
+    // Initialize page
+    loadProductDetail(); // Changed function call
+    </script>
 {% endblock content %}

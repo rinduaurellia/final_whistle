@@ -11,6 +11,10 @@ from main.models import Product
 from django.http import HttpResponse
 from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 # Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
 
@@ -75,8 +79,25 @@ def show_xml(request):
 # Export semua produk dalam format JSON
 def show_json(request):
     product_list = Product.objects.all()
-    json_data = serializers.serialize("json", product_list)
-    return HttpResponse(json_data, content_type="application/json")
+    data = [
+        {
+            'id': str(product.id), # UUID harus menjadi string
+            'name': product.name,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail, # URLField
+            'price': int(product.price), # IntegerField
+            'is_featured': product.is_featured,
+            'rating_product': int(product.rating_product), # IntegerField
+            'size_product': product.size_product,
+            'brand': product.brand,
+            'views': int(product.views), # PositiveIntegerField
+            'user_id': product.user_id,
+        }
+        for product in product_list
+    ]
+
+    return JsonResponse(data, safe=False)
 
 # Export 1 produk berdasarkan id
 def show_xml_by_id(request, product_id):
@@ -88,13 +109,25 @@ def show_xml_by_id(request, product_id):
        return HttpResponse(status=404)
 
 def show_json_by_id(request, product_id):
-   try:
-       # Mengambil data dari database sesuai dengan model Product berdasarkan primary key (pk)
-       product_item = Product.objects.get(pk=product_id)
-       json_data = serializers.serialize("json", [product_item])
-       return HttpResponse(json_data, content_type="application/json")
-   except Product.DoesNotExist:
-       return HttpResponse(status=404)
+    try:
+        product = Product.objects.select_related('user').get(pk=product_id)
+        data = {
+            'id': str(product.id), # UUID harus menjadi string
+            'name': product.name,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail, # URLField
+            'price': int(product.price), # IntegerField
+            'is_featured': product.is_featured,
+            'rating_product': int(product.rating_product), # IntegerField
+            'size_product': product.size_product,
+            'brand': product.brand,
+            'views': int(product.views), # PositiveIntegerField
+            'user_id': product.user_id,
+        }
+        return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
 
 # Registrasi akun baru
 def register(request):
@@ -167,4 +200,60 @@ def show_hot_products(request):
     }
     # Menggunakan template yang sama (main.html) untuk menampilkan daftar produk
     return render(request, "main.html", context)
+
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    if not request.user.is_authenticated:
+        return HttpResponse(b"UNAUTHORIZED", status=401)
+        
+    # 1. Mengambil data dari request.POST
+    # Kami menggunakan name/description/price/brand/size_product untuk mengambil semua field wajib
+    
+    # Ambil field string
+    name = strip_tags(request.POST.get("name"))
+    description = strip_tags(request.POST.get("description"))
+    category = request.POST.get("category")
+    thumbnail = request.POST.get("thumbnail")
+    brand = request.POST.get("brand") 
+    size_product = request.POST.get("size_product")
+    
+    # Ambil field boolean/checkbox
+    is_featured = request.POST.get("is_featured") == 'on' 
+    
+    # Ambil field price (KRITIS)
+    price_str = request.POST.get("price")
+    
+    # 2. Konversi Tipe Data dengan Aman (Mencegah TypeError/ValueError)
+    # Konversi price: Int hanya jika string ada dan berupa digit
+    price_val = int(price_str) if price_str and price_str.isdigit() else 0
+        
+        # Asumsi: rating_product tidak diisi dari form ini, tapi model Anda WAJIB int.
+        # Kita set default 0 untuk memenuhi NOT NULL (jika belum ada default di model).
+    rating_val = 0 # Anda harus mengambil rating_product dari form jika Anda ingin nilainya dinamis
+        
+        # 3. Validasi Data Wajib (Mencegah IntegrityError)
+        # Jika salah satu field wajib di model Anda (price, brand, size_product) kosong:
+    if not brand or not size_product or price_val <= 0:
+        return HttpResponse(b"MISSING_REQUIRED_FIELDS", status=400)
+
+        # 4. Konstruksi dan Penyimpanan Model
+    new_product = Product(
+    name=name, 
+    description=description,
+    category=category,
+    thumbnail=thumbnail,
+    is_featured=is_featured,
+            
+    price=price_val,           # Menggunakan nilai yang sudah dikonversi
+    brand=brand,
+    size_product=size_product, # Menggunakan field model yang benar
+    rating_product=rating_val,
+            
+    user=request.user
+    )
+    new_product.save()
+
+    # 5. Respon Sukses
+    return HttpResponse(b"CREATED", status=201)
 
