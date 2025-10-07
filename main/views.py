@@ -47,6 +47,7 @@ def create_product(request):
         product_entry = form.save(commit = False)
         product_entry.user = request.user
         product_entry.save()
+        messages.success(request, f"Product : '{product_entry.name}' berhasil dibuat.")
         return redirect('main:show_main')
 
     context = {
@@ -137,6 +138,9 @@ def register(request):
             form.save()
             messages.success(request, 'Your account has been successfully created!')
             return redirect('main:login')
+        else : 
+             messages.error(request, "Registration Failed. Try Again.")
+
     context = {'form':form}
     return render(request, 'register.html', context)
 
@@ -148,9 +152,12 @@ def login_user(request):
       if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, f"Welcomeback, {user.username}!")
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
+      else : 
+            messages.error(request, "Login Failed. Check your username and password.")
 
    else:
       form = AuthenticationForm(request)
@@ -160,6 +167,7 @@ def login_user(request):
 # Logout user
 def logout_user(request):
     logout(request)
+    messages.info(request, "You're logged out, See You!")
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
@@ -170,6 +178,7 @@ def edit_product(request, id):
     form = ProductForm(request.POST or None, instance=product)
     if form.is_valid() and request.method == 'POST':
         form.save()
+        messages.info(request, f"Product :  '{product.name}' successfully updated.")
         return redirect('main:show_main')
 
     context = {
@@ -181,11 +190,12 @@ def edit_product(request, id):
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
+    messages.error(request, f"Produk '{product.name}' has been deleted.")
     return HttpResponseRedirect(reverse('main:show_main'))
 
 def show_hot_products(request):
-    # Filter produk yang memiliki views lebih besar dari 50 dan diurutkan berdasarkan views tertinggi
-    hot_products = Product.objects.filter(views__gt=50).order_by('-views') 
+    # Filter produk yang memiliki views lebih besar dari 20 dan diurutkan berdasarkan views tertinggi
+    hot_products = Product.objects.filter(views__gt=20).order_by('-views') 
     
     context = {
         'nama_aplikasi': 'Final Whistle',
@@ -193,10 +203,8 @@ def show_hot_products(request):
         'class': 'PBP C',
         'product_list': hot_products, 
         'last_login': request.COOKIES.get('last_login', 'Never'),
-        # BARIS INI HARUS DITAMBAHKAN
         'is_hot_page': True 
     }
-    # Menggunakan template yang sama (main.html) untuk menampilkan daftar produk
     return render(request, "main.html", context)
 
 @csrf_exempt
@@ -204,54 +212,33 @@ def show_hot_products(request):
 def add_product_entry_ajax(request):
     if not request.user.is_authenticated:
         return HttpResponse(b"UNAUTHORIZED", status=401)
-        
-    # 1. Mengambil data dari request.POST
-    # Kami menggunakan name/description/price/brand/size_product untuk mengambil semua field wajib
-    
-    # Ambil field string
+
     name = strip_tags(request.POST.get("name"))
     description = strip_tags(request.POST.get("description"))
     category = request.POST.get("category")
     thumbnail = request.POST.get("thumbnail")
     brand = request.POST.get("brand") 
     size_product = request.POST.get("size_product")
-    
-    # Ambil field boolean/checkbox
     is_featured = request.POST.get("is_featured") == 'on' 
-    
-    # Ambil field price (KRITIS)
     price_str = request.POST.get("price")
-    
-    # 2. Konversi Tipe Data dengan Aman (Mencegah TypeError/ValueError)
-    # Konversi price: Int hanya jika string ada dan berupa digit
-    price_val = int(price_str) if price_str and price_str.isdigit() else 0
-        
-        # Asumsi: rating_product tidak diisi dari form ini, tapi model Anda WAJIB int.
-        # Kita set default 0 untuk memenuhi NOT NULL (jika belum ada default di model).
-    rating_val = 0 # Anda harus mengambil rating_product dari form jika Anda ingin nilainya dinamis
-        
-        # 3. Validasi Data Wajib (Mencegah IntegrityError)
-        # Jika salah satu field wajib di model Anda (price, brand, size_product) kosong:
+    price_val = int(price_str) if price_str and price_str.isdigit() else 0    
+    rating_val = 0 
     if not brand or not size_product or price_val <= 0:
         return HttpResponse(b"MISSING_REQUIRED_FIELDS", status=400)
 
-        # 4. Konstruksi dan Penyimpanan Model
     new_product = Product(
-    name=name, 
-    description=description,
-    category=category,
-    thumbnail=thumbnail,
-    is_featured=is_featured,
-            
-    price=price_val,           # Menggunakan nilai yang sudah dikonversi
-    brand=brand,
-    size_product=size_product, # Menggunakan field model yang benar
-    rating_product=rating_val,
-            
-    user=request.user
+        name=name, 
+        description=description,
+        category=category,
+        thumbnail=thumbnail,
+        is_featured=is_featured,
+        price=price_val,          
+        brand=brand,
+        size_product=size_product, 
+        rating_product=rating_val,
+                
+        user=request.user
     )
     new_product.save()
-
-    # 5. Respon Sukses
     return HttpResponse(b"CREATED", status=201)
 

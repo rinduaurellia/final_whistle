@@ -18,7 +18,7 @@
     <!-- Header Section -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Latest Football Product</h1>
-      <p class="text-gray-600">Stay updated with the latest football products and reviews</p>
+      <p class="text-gray-600">Stay updated with our New Products and Reviews</p>
     </div>
 
     <!-- Button to open modal -->
@@ -66,7 +66,7 @@
         <img src="{% static 'css/image/no-news.png' %}" alt="No product available" class="w-full h-full object-contain">
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-      <p class="text-gray-500 mb-6">Be the first to share football products with the community.</p>
+      <p class="text-gray-500 mb-6">Be the first to get our newest football products.</p>
       <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 transition-colors">
         Create Product
       </a>
@@ -83,10 +83,11 @@
   const loadingSpinner = document.getElementById('loading');
   const errorMessage = document.getElementById('error');
   const emptyStateDisplay = document.getElementById('empty');
-  const productGridContainer = document.getElementById('grid'); // Diubah dari productGridContainer
-  const showAllProductsButton = document.getElementById('filter-all'); // Diubah dari showAllproductButton
-  const showMyProductsButton = document.getElementById('filter-my'); // Diubah dari showMyproductButton
-  const refreshButton = document.getElementById('refreshButton'); // TANGKAP TOMBOL BARU
+  const productGridContainer = document.getElementById('grid'); 
+  const showAllProductsButton = document.getElementById('filter-all'); 
+  const showMyProductsButton = document.getElementById('filter-my'); 
+  const showHotProductsButton = document.getElementById('filter-hot'); 
+  const refreshButton = document.getElementById('refreshButton'); 
 
   
   // State Variables
@@ -101,10 +102,10 @@
     if (activeFilter === 'all') {
       showAllProductsButton.className = 'bg-sky-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-700';
       showMyProductsButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-600 hover:text-white';
-    } else {
+    } else if (activeFilter == 'my'){
       showMyProductsButton.className = 'bg-sky-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-700';
       showAllProductsButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-600 hover:text-white';
-    }
+    } else if (activeFilter == 'hot'){}
   }
   
   // Show/hide page sections
@@ -137,7 +138,7 @@
 
   
   // Create product card element (Diubah dari buildproductCardElement)
-  function buildProductCardElement(productItem) {
+function buildProductCardElement(productItem) {
   const articleElement = document.createElement('article');
   articleElement.className = 'bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full';
 
@@ -160,7 +161,7 @@
   const isFeatured = DOMPurify.sanitize(productItem.is_featured);
   // Perbaikan: Menggunakan productItem.views (asumsi views adalah key untuk jumlah dilihat)
   const viewsCount = DOMPurify.sanitize(productItem.views)
-  const isHot = DOMPurify.sanitize(viewsCount > 50); 
+  const isHot = DOMPurify.sanitize(viewsCount > 20); 
   
   // Perbaikan: Menggunakan productItem.name
   const thumbnailHtml = DOMPurify.sanitize(productItem.thumbnail
@@ -170,6 +171,7 @@
   const featuredBadge = DOMPurify.sanitize(isFeatured 
     ? `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>` 
     : '');
+    
   const hotBadge = DOMPurify.sanitize(isHot 
     ? `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800'>Hot</span>` 
     : '');
@@ -198,7 +200,7 @@
       <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
         <a href="${detailLink}" class="hover:text-sky-600 transition-colors">${productItem.name}</a> </h3>
       <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">${productItem.description}</p> <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-        <a href="${detailLink}" class="text-sky-600 hover:text-sky-700 font-medium text-sm transition-colors">Product Detail</a>
+        <a href="${detailLink}" class="text-sky-600 hover:text-sky-700 font-medium text-sm transition-colors">Product Detail → </a>
         ${editDeleteButtons}
       </div>
     </div>
@@ -206,10 +208,11 @@
 
   articleElement.innerHTML = cardHtml;
   return articleElement;
+  
 }
   
   // Render all product cards
-  function renderAllProductCards(productItems) { // Diubah dari renderAllproductCards
+  function renderAllProductCards(productItems) { 
     productGridContainer.innerHTML = '';
     productItems.forEach(productItem => {
       const cardElement = buildProductCardElement(productItem);
@@ -218,7 +221,7 @@
   }
   
   // Filter and display products
-  function filterAndDisplayProducts() { // Diubah dari filterAndDisplayproduct
+  function filterAndDisplayProducts() {
     updateFilterButtonsAppearance();
     
     const filteredProducts = activeFilter === 'all' 
@@ -234,7 +237,7 @@
   }
   
   // Fetch product data from server
-  async function fetchProductsFromServer() { // Diubah dari fetchproductFromServer
+  async function fetchProductsFromServer() { 
     try {
       displayPageSection({ showLoading: true });
       
@@ -257,18 +260,18 @@
   }
   
   // Event handlers
-  function handleShowAllProductsClick() { // Diubah dari handleShowAllproductClick
+  function handleShowAllProductsClick() { 
     activeFilter = 'all';
     filterAndDisplayProducts();
   }
   
-  function handleShowMyProductsClick() { // Diubah dari handleShowMyproductClick
+  function handleShowMyProductsClick() { 
     activeFilter = 'my';
     filterAndDisplayProducts();
   }
   
   // Initialize page
-  function initializeProductPage() { // Diubah dari initializeproductPage
+  function initializeProductPage() { 
     showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
     showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
     showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
@@ -289,5 +292,4 @@
       fetchProductFromServer();
   });
   </script>
-
 {% endblock content %}

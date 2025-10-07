@@ -119,10 +119,11 @@
     function getCategoryLabel(categoryCode) {
         const categoryMapping = {
             jersey: 'Jersey',
-            ball: 'Ball',
+            football: 'Football',
             shoes: 'Shoes',
             accessories: 'Aksesoris',
-            apparel: 'Pakaian',
+            hat: 'Hat',
+            Socks: 'Socks',
         };
         return categoryMapping[categoryCode] || categoryCode;
     }
@@ -167,8 +168,6 @@
             minute: '2-digit'
         });
         productViews.textContent = `Views: ${product.views} views`; // Changed to 'views'
-        
-        // Set Product Metadata (Price, Rating, Size, Brand)
         productPrice.textContent = `Price: Rp${(product.price || 0).toLocaleString('id-ID')}`;
         productRating.textContent = `Rating: ⭐ ${product.rating_product || 'N/A'}`;
         productSize.textContent = `Size: ${product.size_product || 'N/A'}`;
@@ -184,15 +183,15 @@
         }
         
         // Set content (Description)
-        productDescription.textContent = product.description; // Changed to 'description'
+        productDescription.textContent = product.description; 
         
         // Set author
         const authorName = product.user_username || 'Anonymous';
-        productAuthor.textContent = `Uploader: ${authorName}`; // Changed to 'Uploader'
+        productAuthor.textContent = `Uploader: ${authorName}`; 
     }
     
     // Fetch product detail
-    async function loadProductDetail() { // Changed function name
+    async function loadProductDetail() { 
         try {
             showState('loading');
             
@@ -205,7 +204,7 @@
             }
     
             const productData = await response.json();
-            renderProduct(productData); // Changed function call
+            renderProduct(productData); 
             showState('ready');
         } catch (error) {
             console.error('Error loading product detail:', error);
@@ -214,6 +213,6 @@
     }
     
     // Initialize page
-    loadProductDetail(); // Changed function call
+    loadProductDetail(); 
     </script>
 {% endblock content %}
