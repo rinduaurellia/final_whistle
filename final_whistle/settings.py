@@ -31,6 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rindu-aurellia-finalwhistle.pbp.cs.ui.ac.id"]
 
+# fix port
 CSRF_TRUSTED_ORIGINS = [
     "https://rindu-aurellia-finalwhistle.pbp.cs.ui.ac.id"
 ]

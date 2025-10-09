@@ -17,7 +17,7 @@ from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 
 # Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
-
+# tes 1
 @login_required(login_url='/login')
 # Menampilkan halaman utama daftar product tapi user harus login
 def show_main(request):
@@ -45,7 +45,7 @@ def create_product(request):
 
     if form.is_valid() and request.method == "POST": # Kirim data ke server
         product_entry = form.save(commit = False)
-        product_entry.user = request.user
+        product_entry.user = request.user 
         product_entry.save()
         messages.success(request, f"Product : '{product_entry.name}' berhasil dibuat.")
         return redirect('main:show_main')
@@ -128,7 +128,8 @@ def show_json_by_id(request, product_id):
     except Product.DoesNotExist:
         return JsonResponse({'detail': 'Not found'}, status=404)
 
-# Registrasi akun baru
+# DEMO 4
+# Registrasi akun baru -> buat register html
 def register(request):
     form = UserCreationForm()
 
@@ -144,7 +145,7 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
-# Login user
+# Login user -> buat login html nya & set cookies ketika user login
 def login_user(request):
    if request.method == 'POST':
       form = AuthenticationForm(data=request.POST)
@@ -164,7 +165,7 @@ def login_user(request):
    context = {'form': form}
    return render(request, 'login.html', context)
 
-# Logout user
+# Logout user -> buat botton di main.html --> hapus cookie ketika user logout
 def logout_user(request):
     logout(request)
     messages.info(request, "You're logged out, See You!")
@@ -172,7 +173,7 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-
+# DEMO 5 -> buat html nya dit emplates
 def edit_product(request, id):
     product = get_object_or_404(Product, pk=id)
     form = ProductForm(request.POST or None, instance=product)
@@ -187,6 +188,7 @@ def edit_product(request, id):
 
     return render(request, "edit_product.html", context)
 
+# Hapus product, tambahkan di main html
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
