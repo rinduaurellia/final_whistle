@@ -61,9 +61,7 @@ def create_product(request):
 def show_product(request, id):
     # Cari produk berdasarkan id
     product = get_object_or_404(Product, pk=id)
-
     product.increment_views()
-
     context = {
         'product': product
     }
@@ -93,6 +91,7 @@ def show_json(request):
             'brand': product.brand,
             'views': int(product.views), # PositiveIntegerField
             'user_id': product.user_id,
+            'uploader_username': product.user.username if product.user else 'Anonymous',
         }
         for product in product_list
     ]
