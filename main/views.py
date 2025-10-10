@@ -17,7 +17,7 @@ from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 
 # Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
-# tes 2
+# tes
 @login_required(login_url='/login')
 # Menampilkan halaman utama daftar product tapi user harus login
 def show_main(request):
