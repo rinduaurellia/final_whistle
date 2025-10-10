@@ -47,7 +47,6 @@ def create_product(request):
         product_entry = form.save(commit = False)
         product_entry.user = request.user 
         product_entry.save()
-        messages.success(request, f"Product : '{product_entry.name}' berhasil dibuat.")
         return redirect('main:show_main')
 
     context = {
@@ -152,7 +151,6 @@ def login_user(request):
       if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f"Welcomeback, {user.username}!")
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
@@ -167,7 +165,6 @@ def login_user(request):
 # Logout user -> buat botton di main.html --> hapus cookie ketika user logout
 def logout_user(request):
     logout(request)
-    messages.info(request, "You're logged out, See You!")
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
