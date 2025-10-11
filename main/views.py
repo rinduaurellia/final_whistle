@@ -188,7 +188,6 @@ def edit_product(request, id):
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
-    messages.error(request, f"Produk '{product.name}' has been deleted.")
     return HttpResponseRedirect(reverse('main:show_main'))
 
 def show_hot_products(request):
