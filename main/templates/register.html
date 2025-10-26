@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block meta %}
 <title>Register - Final Whistle</title>
 {% endblock meta %}
@@ -7,10 +7,18 @@
 {% block content %}
 <div class="form-style">
   <div class="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+     <!-- Gambar background -->
+     <img 
+     src="{% static 'css/image/background.jpg' %}" 
+     alt="Padel background" 
+     class="absolute inset-0 w-full h-full object-cover"
+   >
+   <div class="absolute inset-0 bg-white/30 backdrop-blur-sm"></div>
+
     <div class="max-w-md w-full relative z-10">
-      <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Us</h2>
+      <div class="relative max-w-md w-full bg-white/80 backdrop-blur-md rounded-lg border border-gray-200 p-6 sm:p-8 shadow-lg">
+        <div class="text-center mb-8">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2"><b>Join Us</b></h2>
         <p class="text-gray-500">Create your Final Whistle account</p>
       </div>
 
@@ -77,7 +85,8 @@
 
         <button 
           type="submit" 
-          class="w-full bg-sky-600 text-white font-medium py-3 px-4 rounded hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition duration-200">
+          class="w-full text-white font-medium py-3 px-4 rounded-md transition-colors 
+          bg-[#2D456E] hover:bg-sky-500">
           Create Account
         </button>
       </form>
@@ -106,7 +115,7 @@
       <div class="mt-6 text-center">
         <p class="text-gray-500 text-sm">
           Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-sky-600 hover:text-sky-700 font-medium">
+          <a href="{% url 'main:login' %}" class="text-[#2D456E] hover:text-sky-500 font-medium">
             Sign In
           </a>
         </p>
