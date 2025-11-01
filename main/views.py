@@ -16,28 +16,27 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+
 
 
 # Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
 # tes
 @login_required(login_url='/login')
-# Menampilkan halaman utama daftar product tapi user harus login
 def show_main(request):
-    filter_type = request.GET.get("filter", "all")  # default 'all'
-    # Menentukan produk mana yang akan ditampilkan
-    if filter_type == "all":
-        products = Product.objects.all()
-    else:
-        products = Product.objects.filter(user=request.user)
-    
+    filter_type = request.GET.get("filter", "all")
+    products = Product.objects.all() if filter_type == "all" else Product.objects.filter(user=request.user)
+
+    last_login_time = request.user.last_login
+    formatted_last_login = last_login_time.strftime("%d %b %Y, %H:%M") if last_login_time else "Never"
+
     context = {
         'nama_aplikasi': 'Final Whistle',
         'name': 'Rindu Aurellia Zahra',
         'class': 'PBP C',
         'product_list': products,
-        'last_login': request.COOKIES.get('last_login', 'Never')
+        'last_login': formatted_last_login,
     }
-    # Menerima parameter request mengatur permintaan HTTP dan mengembalikan tampilan sesuai (menghubungan views dan template)
     return render(request, "main.html", context)
 
 # Form menambah produk baru secara otomatis ketika disumbit dari form
