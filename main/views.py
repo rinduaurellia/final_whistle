@@ -15,6 +15,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Berisi logika yang akan ditampilkan pengguna (jembatan modls dan template)
 # tes
@@ -135,7 +137,6 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your account has been successfully created!')
             return redirect('main:login')
         else : 
              messages.error(request, "Registration Failed. Try Again.")
@@ -190,17 +191,40 @@ def delete_product(request, id):
     product.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
 
+def show_hot_products_json(request):
+    """Return only products with views > 20 as JSON."""
+    hot_products = Product.objects.filter(views__gt=20).order_by('-views')
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'price': int(product.price),
+            'is_featured': product.is_featured,
+            'rating_product': int(product.rating_product),
+            'size_product': product.size_product,
+            'brand': product.brand,
+            'views': int(product.views),
+            'user_id': product.user_id,
+            'uploader_username': product.user.username if product.user else 'Anonymous',
+        }
+        for product in hot_products
+    ]
+    return JsonResponse(data, safe=False)
+
 def show_hot_products(request):
-    # Filter produk yang memiliki views lebih besar dari 20 dan diurutkan berdasarkan views tertinggi
-    hot_products = Product.objects.filter(views__gt=20).order_by('-views') 
+    # Ambil hanya produk dengan views > 20
+    hot_products = Product.objects.filter(views__gt=20).order_by('-views')
     
     context = {
         'nama_aplikasi': 'Final Whistle',
         'name': 'Rindu Aurellia Zahra',
         'class': 'PBP C',
-        'product_list': hot_products, 
+        'product_list': hot_products,
         'last_login': request.COOKIES.get('last_login', 'Never'),
-        'is_hot_page': True 
+        'is_hot_page': True,  # Bisa dipakai buat highlight tombol
     }
     return render(request, "main.html", context)
 
@@ -239,3 +263,104 @@ def add_product_entry_ajax(request):
     new_product.save()
     return HttpResponse(b"CREATED", status=201)
 
+@csrf_exempt
+@require_POST
+def edit_product_entry_ajax(request, id):
+    product = get_object_or_404(Product, pk=id, user=request.user)
+
+    product.name = strip_tags(request.POST.get("name"))
+    product.description = strip_tags(request.POST.get("description"))
+    product.category = request.POST.get("category")
+    product.thumbnail = request.POST.get("thumbnail")
+    product.price = request.POST.get("price") or 0
+    product.stock = request.POST.get("stock") or 0
+    product.brand = strip_tags(request.POST.get("brand"))
+    product.is_featured = request.POST.get("is_featured") == 'on'
+
+    product.save()
+
+    return HttpResponse(b"EDITED", status=200)
+
+@csrf_exempt
+@require_POST
+def delete_product_ajax(request, id):
+    try:
+        product = get_object_or_404(Product, pk=id, user=request.user)
+        product.delete()
+        return JsonResponse({"status": "success", "message": "Product deleted successfully!"}, status=200)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    
+@csrf_exempt
+def register_ajax(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Your account has been successfully created!',
+                'redirect_url': reverse('main:login')  # ✅ Redirect ke halaman login
+            }, status=201)
+        else:
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f"{field.capitalize()}: {error}")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Registration failed.",
+                'errors': errors
+            }, status=400)
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method.'
+    }, status=405)
+
+def login_ajax(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return JsonResponse({
+                'status': 'success',
+                'message': f'👋 Welcome back, {user.username}!',
+                'redirect_url': reverse('main:show_main')
+            })
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid username or password.'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid method.'}, status=405)
+
+def logout_ajax(request):
+    logout(request)
+
+    response_data = {
+        'status': 'success',
+        'message': '👋 You have been successfully logged out.',
+        'redirect_url': reverse('main:login')
+    }
+
+    response = JsonResponse(response_data)
+    response.delete_cookie('last_login')
+    return response
+
+@csrf_exempt
+@require_POST
+def edit_product_entry_ajax(request, id):
+    product = get_object_or_404(Product, pk=id, user=request.user)
+
+    product.name = strip_tags(request.POST.get("name"))
+    product.description = strip_tags(request.POST.get("description"))
+    product.category = request.POST.get("category")
+    product.thumbnail = request.POST.get("thumbnail")
+    product.price = request.POST.get("price") or 0
+    product.stock = request.POST.get("stock") or 0
+    product.brand = strip_tags(request.POST.get("brand"))
+    product.is_featured = request.POST.get("is_featured") == 'on'
+
+    product.save()
+
+    return JsonResponse({"status": "success", "message": f"Product '{product.name}' updated successfully!"}, status=200)

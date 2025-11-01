@@ -5,123 +5,120 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="form-style">
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-8">
-     <!-- Gambar background -->
-     <img 
-     src="{% static 'css/image/background.jpg' %}" 
-     alt="Padel background" 
-     class="absolute inset-0 w-full h-full object-cover"
-   >
-   <div class="absolute inset-0 bg-white/30 backdrop-blur-sm"></div>
+<div class="relative w-full min-h-screen flex items-center justify-center p-8 overflow-hidden">
+  <!-- Background -->
+  <img 
+    src="{% static 'css/image/background.jpg' %}" 
+    alt="Padel background" 
+    class="absolute inset-0 w-full h-full object-cover"
+  >
+  <div class="absolute inset-0 bg-white/30 backdrop-blur-sm"></div>
 
-    <div class="max-w-md w-full relative z-10">
-      <div class="relative max-w-md w-full bg-white/80 backdrop-blur-md rounded-lg border border-gray-200 p-6 sm:p-8 shadow-lg">
-        <div class="text-center mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2"><b>Join Us</b></h2>
-        <p class="text-gray-500">Create your Final Whistle account</p>
+  <!-- Register Form Card -->
+  <div class="relative max-w-md w-full bg-white/80 backdrop-blur-md rounded-lg border border-gray-200 p-6 sm:p-8 shadow-lg z-10">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2"><b>Join Us</b></h2>
+      <p class="text-gray-500">Create your Final Whistle account</p>
+    </div>
+
+    <!-- Error Container -->
+    <div id="form-errors-container"></div>
+
+    <form id="register-form" method="POST" class="space-y-5">
+      {% csrf_token %}
+      
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+        <input 
+          id="username" 
+          name="username" 
+          type="text" 
+          required 
+          class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
+          placeholder="Choose a username">
       </div>
 
-      <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-5">
-        {% csrf_token %}
-        
-        <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-          <input 
-            id="username" 
-            name="username" 
-            type="text" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
-            placeholder="Choose a username">
-        </div>
-
-        <div>
-          <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input 
-            id="password1" 
-            name="password1" 
-            type="password" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
-            placeholder="Create a password">
-        </div>
-
-        <div>
-          <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-          <input 
-            id="password2" 
-            name="password2" 
-            type="password" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
-            placeholder="Confirm your password">
-        </div>
-
-        <button 
-          type="submit" 
-          class="w-full text-white font-medium py-3 px-4 rounded-md transition-colors 
-          bg-[#2D456E] hover:bg-sky-500">
-          Create Account
-        </button>
-      </form>
-
-      <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded text-sm border
-                {% if message.tags == 'success' %}
-                  bg-sky-50 border-sky-200 text-sky-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <div class="mt-6 text-center">
-        <p class="text-gray-500 text-sm">
-          Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-[#2D456E] hover:text-sky-500 font-medium">
-            Sign In
-          </a>
-        </p>
+      <div>
+        <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+        <input 
+          id="password1" 
+          name="password1" 
+          type="password" 
+          required 
+          class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
+          placeholder="Create a password">
       </div>
+
+      <div>
+        <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+        <input 
+          id="password2" 
+          name="password2" 
+          type="password" 
+          required 
+          class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-sky-500 transition duration-200" 
+          placeholder="Confirm your password">
       </div>
+
+      <button 
+        type="submit" 
+        class="w-full text-white font-medium py-3 px-4 rounded-md transition-colors bg-[#2D456E] hover:bg-sky-500">
+        Create Account
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <p class="text-gray-500 text-sm">
+        Already have an account? 
+        <a href="{% url 'main:login' %}" class="text-[#2D456E] hover:text-sky-500 font-medium">
+          Sign In
+        </a>
+      </p>
     </div>
   </div>
 </div>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const errorsContainer = document.getElementById('form-errors-container');
+  errorsContainer.innerHTML = '';
+
+  const formData = new FormData(this);
+
+  try {
+    const response = await fetch("{% url 'main:register_ajax' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast(data.message, '', 'success');
+      setTimeout(() => {
+        window.location.href = data.redirect_url; // ✅ ke halaman login
+      }, 1500);
+    } else {
+      // tampilkan error Django
+      if (data.errors) {
+        data.errors.forEach(err => {
+          const div = document.createElement('div');
+          div.className = 'px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2';
+          div.textContent = err;
+          errorsContainer.appendChild(div);
+        });
+      }
+      showToast('Registration failed.', '', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Could not connect to the server.', '', 'error');
+  }
+});
+</script>
 {% endblock content %}

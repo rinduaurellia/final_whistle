@@ -30,7 +30,7 @@
       <div class="flex space-x-3 mb-4 sm:mb-0">
         <a id="filter-all" class="bg-sky-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-700">
           All Product
-        </a>
+        </a>        
         <a id="filter-my" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-sky-600 hover:text-white">
           My Product
         </a>
@@ -85,8 +85,9 @@
   const productGridContainer = document.getElementById('grid'); 
   const showAllProductsButton = document.getElementById('filter-all'); 
   const showMyProductsButton = document.getElementById('filter-my'); 
-  const showHotProductsButton = document.getElementById('filter-hot'); 
   const refreshButton = document.getElementById('refreshButton'); 
+  const logoutButton = document.getElementById('logout-button');
+
 
   
   // State Variables
@@ -155,6 +156,7 @@ function buildProductCardElement(productItem) {
           day: 'numeric' 
       });
   }
+
 
   const categoryLabel = DOMPurify.sanitize(getReadableCategoryName(productItem.category));
   const isFeatured = DOMPurify.sanitize(productItem.is_featured);
@@ -291,4 +293,51 @@ function buildProductCardElement(productItem) {
       fetchProductFromServer();
   });
   </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const logoutButton = document.getElementById('logout-button');
+    if (!logoutButton) {
+      console.warn("⚠️ Logout button tidak ditemukan di halaman ini");
+      return;
+    }
+  
+    function getCSRFToken() {
+      const name = "csrftoken";
+      const cookies = document.cookie.split(";");
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+          return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      }
+      return null;
+    }
+  
+    logoutButton.addEventListener('click', async function() {
+      try {
+        const response = await fetch("{% url 'main:logout_ajax' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCSRFToken(),
+          },
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          showToast("Success", data.message, "success");
+          setTimeout(() => {
+            window.location.href = data.redirect_url;
+          }, 1500);
+        } else {
+          showToast("Logout Failed", data.message || "Unexpected error.", "error");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+        showToast("Network Error", "Could not connect to the server.", "error");
+      }
+    });
+  });
+  </script>  
 {% endblock content %}

@@ -21,7 +21,8 @@
         <p class="text-gray-600">Update your football product details</p>
       </div>
       
-      <form method="POST" class="space-y-6">
+      <!-- 🧠 Ganti form biasa jadi pakai id biar bisa di-handle AJAX -->
+      <form id="edit-product-form" method="POST" class="space-y-6">
         {% csrf_token %}
         {% for field in form %}
           <div>
@@ -52,4 +53,44 @@
     </div>
   </div>
 </div>
+
+<!-- 🧩 Tambahkan script AJAX di bawah -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('edit-product-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const productId = "{{ form.instance.id }}"; // ambil id produk dari form instance
+
+    try {
+      const response = await fetch(`/edit-product-ajax/${productId}/`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast("Success", data.message || "Product updated successfully!", "success");
+        // tunggu 1.5 detik biar toast muncul dulu
+        setTimeout(() => {
+          window.location.href = "{% url 'main:show_main' %}";
+        }, 1500);
+      } else {
+        showToast("Update Failed", data.message || "Error updating product.", "error");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      showToast("Network Error", "Could not connect to the server.", "error");
+    }
+  });
+});
+</script>
 {% endblock content %}
