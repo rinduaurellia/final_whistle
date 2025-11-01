@@ -319,20 +319,28 @@ def register_ajax(request):
         'message': 'Invalid request method.'
     }, status=405)
 
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+
 def login_ajax(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)  # 🔥 Ini penting — update last_login otomatis
             return JsonResponse({
-                'status': 'success',
-                'message': f'👋 Welcome back, {user.username}!',
-                'redirect_url': reverse('main:show_main')
+                "message": "Login successful!",
+                "redirect_url": "/"
             })
         else:
-            return JsonResponse({'status': 'error', 'message': 'Invalid username or password.'}, status=400)
-    return JsonResponse({'status': 'error', 'message': 'Invalid method.'}, status=405)
+            return JsonResponse({
+                "message": "Invalid username or password."
+            }, status=400)
+
+    return JsonResponse({"message": "Invalid request method."}, status=400)
+
 
 def logout_ajax(request):
     logout(request)
