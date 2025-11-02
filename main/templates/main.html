@@ -200,6 +200,7 @@ function buildProductCardElement(productItem) {
         <span>${viewsCount} views</span> </div>
       <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
         <a href="${detailLink}" class="hover:text-sky-600 transition-colors">${productItem.name}</a> </h3>
+        <p class="text-sky-700 font-semibold mb-2">Rp ${Number(productItem.price).toLocaleString('id-ID')}</p>
       <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">${productItem.description}</p> <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
         <a href="${detailLink}" class="text-sky-600 hover:text-sky-700 font-medium text-sm transition-colors">Product Detail → </a>
         ${editDeleteButtons}
