@@ -17,6 +17,12 @@ from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
+import requests
 
 
 
@@ -124,6 +130,36 @@ def show_json_by_id(request, product_id):
             'user_id': product.user_id,
         }
         return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+def show_json_by_user_id(request, product_id):
+    try:
+        try : 
+            user = User.objects.get(id=product_id)
+        except User.DoesNotExist : 
+            return JsonResponse([], safe=False)
+        product_list = Product.objects.filter(user=user)
+        data = [
+        {
+            'id': str(product.id), # UUID harus menjadi string
+            'name': product.name,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail, # URLField
+            'price': int(product.price), # IntegerField
+            'is_featured': product.is_featured,
+            'rating_product': int(product.rating_product), # IntegerField
+            'size_product': product.size_product,
+            'brand': product.brand,
+            'views': int(product.views), # PositiveIntegerField
+            'user_id': product.user_id,
+            'uploader_username': product.user.username if product.user else 'Anonymous',
+        }
+        for product in product_list
+        ]
+        return JsonResponse(data, safe=False)
+    
     except Product.DoesNotExist:
         return JsonResponse({'detail': 'Not found'}, status=404)
 
@@ -354,20 +390,94 @@ def logout_ajax(request):
     response.delete_cookie('last_login')
     return response
 
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
 @csrf_exempt
-@require_POST
-def edit_product_entry_ajax(request, id):
-    product = get_object_or_404(Product, pk=id, user=request.user)
+def create_product_flutter(request):
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Invalid method"}, 
+                            status=400)
 
-    product.name = strip_tags(request.POST.get("name"))
-    product.description = strip_tags(request.POST.get("description"))
-    product.category = request.POST.get("category")
-    product.thumbnail = request.POST.get("thumbnail")
-    product.price = request.POST.get("price") or 0
-    product.stock = request.POST.get("stock") or 0
-    product.brand = strip_tags(request.POST.get("brand"))
-    product.is_featured = request.POST.get("is_featured") == 'on'
+    try:
+        data = json.loads(request.body)
 
-    product.save()
+        name = strip_tags(data.get("name", ""))
+        description = strip_tags(data.get("description", ""))
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        price = data.get("price", 0)
+        is_featured = data.get("is_featured", False)
+        rating_product = data.get("rating_product", 0)
+        size_product = data.get("size_product", "")
+        brand = data.get("brand", "")
+        views = data.get("views", 0)
 
-    return JsonResponse({"status": "success", "message": f"Product '{product.name}' updated successfully!"}, status=200)
+        # user dari session
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({
+                "status": "error", 
+                "message": "User not authenticated"
+            }, status=401)
+
+        new_product = Product(
+            name=name,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            price=price,
+            is_featured=is_featured,
+            rating_product=rating_product,
+            size_product=size_product,
+            brand=brand,
+            views=views,
+            user=user,
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success", "message": "Product created"}, 
+                            status=200)
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, 
+                            status=500)
+    
+@login_required
+def my_products_json(request):
+    products = Product.objects.filter(user=request.user)
+
+    return JsonResponse([
+        {
+            'id': str(p.id),
+            'name': p.name,
+            'description': p.description,
+            'category': p.category,
+            'thumbnail': p.thumbnail,
+            'price': int(p.price),
+            'is_featured': p.is_featured,
+            'rating_product': int(p.rating_product),
+            'size_product': p.size_product,
+            'brand': p.brand,
+            'views': int(p.views),
+            'user_id': p.user_id,
+            'uploader_username': p.user.username,
+        }
+        for p in products
+    ], safe=False)

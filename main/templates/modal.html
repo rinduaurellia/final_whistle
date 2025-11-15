@@ -82,17 +82,20 @@
   </div>
   
   <script>
+    // menampilkan modal dengan animasi fade-in dan scale-up
     function showModal() {
         const modal = document.getElementById('crudModal');
         const modalContent = document.getElementById('crudModalContent');
   
         modal.classList.remove('hidden'); 
+        // Memberikan delay untuk efek transisi yang smooth
         setTimeout(() => {
           modalContent.classList.remove('opacity-0', 'scale-95');
           modalContent.classList.add('opacity-100', 'scale-100');
         }, 50); 
     }
   
+    // menyembunyikan modal dengan animasi fade-out dan scale-down
     function hideModal() {
         const modal = document.getElementById('crudModal');
         const modalContent = document.getElementById('crudModalContent');
@@ -105,6 +108,7 @@
         }, 150); 
     }
 
+    // mengirim data form melalui AJAX ke server -> tapilin toast notif kirim custom event -> didengar main page -> refresh dinamis
     async function addProductEntry() {
     await fetch("{% url 'main:add_product_entry_ajax' %}", {
       method: "POST",

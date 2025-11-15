@@ -1,3 +1,4 @@
+// Fungsionalitas utama toast (judul notif, isinya, tipe notif, durasi) -> cari elemen html yang sesuai
 function showToast(title, message, type = 'normal', duration = 3000) {
     const toastComponent = document.getElementById('toast-component');
     const toastTitle = document.getElementById('toast-title');
@@ -6,7 +7,7 @@ function showToast(title, message, type = 'normal', duration = 3000) {
     
     if (!toastComponent) return;
 
-    // Remove all type classes first
+    // Remove all type classes (Tailwind/CSS) first (supaya ga numpuk)
     toastComponent.classList.remove(
         'bg-red-50', 'border-red-500', 'text-red-600',
         'bg-green-50', 'border-green-500', 'text-green-600',
@@ -34,6 +35,7 @@ function showToast(title, message, type = 'normal', duration = 3000) {
     toastTitle.textContent = title;
     toastMessage.textContent = message;
 
+    // Tampilin toastnya & sembunyikan
     toastComponent.classList.remove('opacity-0', 'translate-y-64');
     toastComponent.classList.add('opacity-100', 'translate-y-0');
 
